@@ -101,12 +101,18 @@ public abstract class BaseServerPacketListener extends BasePacketListener {
 
     protected static ChatJsonContainer deployContainer(@Nonnull PacketEvent packetEvent, @Nonnull PsrUser user,
                                                        @Nonnull String json, List<ReplacerConfig> replacers) {
+    if (json.contains("hover_event") || json.contains("click_event")) {
+        ChatJsonContainer container = new ChatJsonContainer(json, false);
+        container.createJsons(container);
+        return container;
+    }
+
         boolean blocked = false;
         ReplacerManager replacerManager = ProtocolStringReplacer.getInstance().getReplacerManager();
 
         ChatJsonContainer container = new ChatJsonContainer(json, true);
+    container.createJsons(container);
 
-        container.createJsons(container);
         if (replacerManager.isJsonBlocked(container, replacers)) {
             packetEvent.setCancelled(true);
             blocked = true;
